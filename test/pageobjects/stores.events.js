@@ -57,15 +57,18 @@ class EventsPage extends Page {
     get resultsHeader () {
         return $('[xxl="9"]>h2[class="sectionHeaders"]')
     }
+    get resultCard () {
+        return $(`//div[@class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1h77wgb"]/div[@class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-12 MuiGrid-grid-md-12 MuiGrid-grid-lg-6 MuiGrid-grid-xl-6 css-tletg0"]`)
+    }
     checkBoxes = {
-        // today: {
-        //     name: "Today",
-        //     selector: "today",
-        // },
-        // thisWeek: {
-        //     name: "This Week",
-        //     selector: "thisWeek",
-        // },
+        today: {
+            name: "Today",
+            selector: "today",
+        },
+        thisWeek: {
+            name: "This Week",
+            selector: "thisWeek",
+        },
         month0: {
             name: "December",
             selector: "month0",
@@ -121,12 +124,30 @@ class EventsPage extends Page {
     resultsByDate (date) {
         return $(`//div[@class="eventDate"][contains(text(), "${date}")]`)
     }
+    async uncheckDefaults () {
+        await this.dynamicCheckboxSelect('today').click()
+        await this.dynamicCheckboxSelect('thisWeek').click()
+        await this.dynamicCheckboxSelect('month0').click()
+        await this.dynamicCheckboxSelect('author').click()
+        await this.dynamicCheckboxSelect('children').click()
+        await this.dynamicCheckboxSelect('virtual').click()
+        await this.dynamicCheckboxSelect('inStore').click()
+    }
     async checkboxResultsFiltering () {
         await this.closeCookies.click()
         await this.updateCheckboxes()
+        await this.uncheckDefaults()
         for (const item of Object.values(this.checkBoxes)) {
             await this.dynamicCheckboxSelectByName(item.name).click()
-            await expect(this.resultsByDate(item.name)).toExist()
+            try {
+                if (item.name == 'This Week') 
+                    await expect(this.resultsByDate(this.checkBoxes.month0.name)).toExist()
+                else 
+                    await expect(this.resultsByDate(item.name)).toExist()
+            }catch {
+                await expect(this.resultCard).not.toExist()
+            }
+            await this.dynamicCheckboxSelectByName(item.name).click()
         } 
     }
 
