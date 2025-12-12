@@ -3,9 +3,7 @@ import Page from './page.js';
 
 
 class ResultsPage extends Page {
-    /**
-     * Selectors
-     */
+
     get showResults () {
         return $('.result-show')
     }

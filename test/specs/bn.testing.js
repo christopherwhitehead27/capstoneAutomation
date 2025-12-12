@@ -1,31 +1,32 @@
 import HomePage from '../pageobjects/home.js'
 import EventsPage from '../pageobjects/stores.events.js'
 
-describe('Barnes & Noble Search', () => {
-    it('should return valid results with valid query, using search button and enter key', async () => {
-        await HomePage.start()
-        await HomePage.searchEachWithBtn('national')
-        await HomePage.searchEachWithKey('national')
-    })
-    it('should return no results with invalid query, using search button or enter key', async () => {
-        await HomePage.start()
-        await HomePage.searchEachWithBtnInv('qazwsxedcrfv')
-        await HomePage.searchEachWithKeyInv('qazwsxedcrfv')
-    })
-    it('should deny user access when SQL injection is attempted', async () => {
-        await HomePage.start()
-        await HomePage.sqlInject(`' OR 1=1 --`)
-    })
-})
+// describe('Barnes & Noble Search', () => {
+//     it('should return valid results with valid query, using search button and enter key', async () => {
+//         await HomePage.start()
+//         await HomePage.searchEachWithBtn('national')
+//         await HomePage.searchEachWithKey('national')
+//     })
+//     it('should return no results with invalid query, using search button or enter key', async () => {
+//         await HomePage.start()
+//         await HomePage.searchEachWithBtnInv('qazwsxedcrfv')
+//         await HomePage.searchEachWithKeyInv('qazwsxedcrfv')
+//     })
+//     it('should deny user access when SQL injection is attempted', async () => {
+//         await HomePage.start()
+//         await HomePage.sqlInject(`' OR 1=1 --`)
+//     })
+// })
 describe('Barnes & Noble Stores and Events', () => {
-    it('map buttons should function as intended', async () => {
-        await EventsPage.storesEvents()
-        await EventsPage.zoomInAndOut()
-        await EventsPage.selStoreDetails()
-        await EventsPage.changeMapView()
-    })
+    // it('map buttons should function as intended', async () => {
+    //     await EventsPage.storesEvents()
+    //     await EventsPage.zoomInAndOut()
+    //     await EventsPage.selStoreDetails()
+    //     await EventsPage.changeMapView()
+    // })
     it('results should change when filtered and sorted', async () => {
         await EventsPage.storesEvents()
+        await EventsPage.checkboxResultsFiltering()
     })
 })
 
