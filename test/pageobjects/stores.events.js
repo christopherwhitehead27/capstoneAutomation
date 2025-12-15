@@ -157,18 +157,18 @@ class EventsPage extends Page {
                 if (item.name == 'This Week') 
                     await expect(this.resultsByDate(this.checkBoxes.month0.name)).toExist()
                 else if (item.name == 'Author Event')
-                    await expect(this.resultsByType(this.checkBoxes.author.name).toExist())
+                    await expect(this.resultsByType(this.checkBoxes.author.name)).toExist()
                 else if (item.name == "Children's Event")
-                    await expect(this.resultsByType('Storytime').toExist())
+                    await expect(this.resultsByType('Storytime')).toExist()
                 else if (item.name == "Other")
-                    await expect(this.resultsByType('Special Event').toExist())
+                    await expect(this.resultsByType('Special Event')).toExist()
                 else if (item.name == "Virtual Event")
-                    await expect(this.resultsByLocation(this.checkBoxes.virtual.name).toExist())
+                    await expect(this.resultsByLocation(this.checkBoxes.virtual.name)).toExist()
                 else if (item.name == "In-Store")
-                    await expect(this.resultsByLocation('In Store').toExist())
+                    await expect(this.resultsByLocation('In Store')).toExist()
                 else 
                     await expect(this.resultsByDate(item.name)).toExist()
-            }catch {
+            } catch {
                 await expect(this.resultCard).not.toExist()
             }
             await this.dynamicCheckboxSelectByName(item.name).click()
