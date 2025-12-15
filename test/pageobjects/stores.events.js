@@ -4,9 +4,6 @@ import Page from './page'
 class EventsPage extends Page {
 
     get map () {
-        return $('canvas+div')
-    }
-    get mapFocus () {
         return $('#mapFocus')
     }
     get zoomIn () {
@@ -54,11 +51,29 @@ class EventsPage extends Page {
     get closeCookies () {
         return $('#onetrust-close-btn-container')
     }
-    get resultsHeader () {
-        return $('[xxl="9"]>h2[class="sectionHeaders"]')
-    }
     get resultCard () {
         return $(`//div[@class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1h77wgb"]/div[@class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-12 MuiGrid-grid-md-12 MuiGrid-grid-lg-6 MuiGrid-grid-xl-6 css-tletg0"]`)
+    }
+    get buyTickets () {
+        return $('button[id*="eventbrite"]')
+    }
+    get ticketsContinue () {
+        return $('//button[@class][contains(text(), "Continue")]')
+    }
+    get ticketsClose () {
+        return $('[aria-label="close"]')
+    }
+    get eventbriteWidget () {
+        return $('#eventbrite-widget-modal-overlay')
+    }
+    get widgetClose () {
+        return $('#modal-close-button')
+    }
+    get viewDetails () {
+        return $('//a[@class][contains(text(), "VIEW DETAILS")]')
+    }
+    get eventDetails () {
+        return $('//h3[@class][contains(text(), "Event Details")]')
     }
     checkBoxes = {
         today: {
@@ -93,28 +108,27 @@ class EventsPage extends Page {
             name: "May",
             selector: "month5",
         },
-        // author: {
-        //     name: "Author Event",
-        //     selector: "author",
-        // },
-        // children: {
-        //     name: "Children's Event",
-        //     selector: "children",
-        // },
-        // other: {
-        //     name: "Other",
-        //     selector: "other",
-        // },
-        // virtual: {
-        //     name: "Virtual Event",
-        //     selector: "virtual",
-        // },
-        // inStore: {
-        //     name: "In-Store",
-        //     selector: "inStore",
-        // },
+        author: {
+            name: "Author Event",
+            selector: "author",
+        },
+        children: {
+            name: "Children's Event",
+            selector: "children",
+        },
+        other: {
+            name: "Other",
+            selector: "other",
+        },
+        virtual: {
+            name: "Virtual Event",
+            selector: "virtual",
+        },
+        inStore: {
+            name: "In-Store",
+            selector: "inStore",
+        },
     }
-    // filter = ['today', 'thisWeek', 'month0', 'month1', 'month2', 'month3', 'month4', 'month5', 'author', 'children', 'other', 'virtual', 'inStore']
     dynamicCheckboxSelect (title) {
         return $(`//input[@name="${title}"]/ancestor::label`)
     }
@@ -123,6 +137,12 @@ class EventsPage extends Page {
     }
     resultsByDate (date) {
         return $(`//div[@class="eventDate"][contains(text(), "${date}")]`)
+    }
+    resultsByType (event) {
+        return $(`//div[@class="eventType"][contains(text(), "${event}")]`)
+    }
+    resultsByLocation (location) {
+        return $(`//div[@class="eventLocation"][contains(text(), "${location}")]`)
     }
     async uncheckDefaults () {
         await this.dynamicCheckboxSelect('today').click()
@@ -142,6 +162,16 @@ class EventsPage extends Page {
             try {
                 if (item.name == 'This Week') 
                     await expect(this.resultsByDate(this.checkBoxes.month0.name)).toExist()
+                else if (item.name == 'Author Event')
+                    await expect(this.resultsByType(this.checkBoxes.author.name).toExist())
+                else if (item.name == "Children's Event")
+                    await expect(this.resultsByType('Storytime').toExist())
+                else if (item.name == "Other")
+                    await expect(this.resultsByType('Special Event').toExist())
+                else if (item.name == "Virtual Event")
+                    await expect(this.resultsByLocation(this.checkBoxes.virtual.name).toExist())
+                else if (item.name == "In-Store")
+                    await expect(this.resultsByLocation('In Store').toExist())
                 else 
                     await expect(this.resultsByDate(item.name)).toExist()
             }catch {
@@ -150,12 +180,30 @@ class EventsPage extends Page {
             await this.dynamicCheckboxSelectByName(item.name).click()
         } 
     }
-
     async updateCheckboxes () {
-        // currentName = await this.dynamicCheckboxSelect(this.checkBoxes.month0.selector).getText()
         this.checkBoxes.month0.name = await this.dynamicCheckboxSelect(this.checkBoxes.month0.selector).getText()
     }
-
+    async virtualDetailsTickets () {
+        // await this.closeCookies.click()
+        await this.uncheckDefaults()
+        await this.dynamicCheckboxSelect('virtual').click()
+        await this.viewDetails.click()
+        await expect(this.eventDetails).toExist()
+        await browser.back()
+        await expect(this.map).toBePresent()
+        await this.buyTickets.click()
+        await expect(this.ticketsContinue).toBeDisplayed()
+        await this.ticketsClose.waitForClickable()
+        await this.ticketsClose.click()
+    }
+    async inStoreDetails () {
+        await this.dynamicCheckboxSelect('virtual').click()
+        await this.dynamicCheckboxSelect('inStore').click()
+        await this.viewDetails.click()
+        await expect(this.eventDetails).toExist()
+        await browser.back()
+        await expect(this.map).toBePresent()
+    }
     async zoomInAndOut () {
         await this.zoomIn.click()
         await expect(this.zoomLevelUp).toBeExisting()
@@ -180,13 +228,6 @@ class EventsPage extends Page {
         await this.birdseyeClose.click()
         await this.locateMe.click()
         await expect(this.locateMePressed).toBeExisting()
-    }
-    async filterResults () {
-        await this.closeCookies.click()
-        for (let i = 0; i < this.filter.length; i++) {
-            await this.dynamicCheckboxSelect(this.filter[i]).click()
-        }
-        await expect(this.resultsHeader).toHaveText('0 Upcoming Events Near Kansas City, KS')
     }
     storesEvents () {
         return browser.url(`https://stores.barnesandnoble.com/`)
