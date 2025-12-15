@@ -63,12 +63,6 @@ class EventsPage extends Page {
     get ticketsClose () {
         return $('[aria-label="close"]')
     }
-    get eventbriteWidget () {
-        return $('#eventbrite-widget-modal-overlay')
-    }
-    get widgetClose () {
-        return $('#modal-close-button')
-    }
     get viewDetails () {
         return $('//a[@class][contains(text(), "VIEW DETAILS")]')
     }
@@ -184,7 +178,6 @@ class EventsPage extends Page {
         this.checkBoxes.month0.name = await this.dynamicCheckboxSelect(this.checkBoxes.month0.selector).getText()
     }
     async virtualDetailsTickets () {
-        // await this.closeCookies.click()
         await this.uncheckDefaults()
         await this.dynamicCheckboxSelect('virtual').click()
         await this.viewDetails.click()
