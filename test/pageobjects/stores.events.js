@@ -1,7 +1,7 @@
 import { $, browser } from '@wdio/globals'
-import Page from './page'
+import Primary from './primary'
 
-class EventsPage extends Page {
+class EventsPage extends Primary {
 
     get map () {
         return $('#mapFocus')
@@ -148,7 +148,6 @@ class EventsPage extends Page {
         await this.dynamicCheckboxSelect('inStore').click()
     }
     async checkboxResultsFiltering () {
-        await this.closeCookies.click()
         await this.updateCheckboxes()
         await this.uncheckDefaults()
         for (const item of Object.values(this.checkBoxes)) {
@@ -178,7 +177,6 @@ class EventsPage extends Page {
         this.checkBoxes.month0.name = await this.dynamicCheckboxSelect(this.checkBoxes.month0.selector).getText()
     }
     async virtualDetailsTickets () {
-        await this.uncheckDefaults()
         await this.dynamicCheckboxSelect('virtual').click()
         await this.viewDetails.click()
         await expect(this.eventDetails).toExist()
@@ -188,9 +186,9 @@ class EventsPage extends Page {
         await expect(this.ticketsContinue).toBeDisplayed()
         await this.ticketsClose.waitForClickable()
         await this.ticketsClose.click()
+        await this.dynamicCheckboxSelect('virtual').click()
     }
     async inStoreDetails () {
-        await this.dynamicCheckboxSelect('virtual').click()
         await this.dynamicCheckboxSelect('inStore').click()
         await this.viewDetails.click()
         await expect(this.eventDetails).toExist()
@@ -198,6 +196,7 @@ class EventsPage extends Page {
         await expect(this.map).toBePresent()
     }
     async zoomInAndOut () {
+        await this.closeCookies.click()
         await this.zoomIn.click()
         await expect(this.zoomLevelUp).toBeExisting()
         await this.zoomOut.click()

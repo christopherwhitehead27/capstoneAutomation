@@ -1,9 +1,8 @@
 import { $ } from '@wdio/globals'
-import ResultsPage from './results.js';
-import Page from './page.js';
+import Primary from './primary.js';
 
 
-class HomePage extends Page {
+class HomePage extends Primary {
     get inputSearch () {
         return $('[role="combobox"]');
     }
@@ -22,55 +21,55 @@ class HomePage extends Page {
     async searchEachWithBtn (query) {
         await this.inputSearch.setValue(`${query}`)
         await this.searchButton.click()
-        await expect(ResultsPage.showResults).toBeExisting()
+        await expect(this.showResults).toBeExisting()
         for (let i = 0; i < this.category.length; i++) {
             await this.dropdownSelect.click()
             await this.dynamicCategorySelect(this.category[i]).click()
             await this.inputSearch.setValue(`${query}`)
             await this.searchButton.click()
-            await expect(ResultsPage.showResults).toBeExisting()
+            await expect(this.showResults).toBeExisting()
         }
     }
     async searchEachWithBtnInv (query) {
         await this.inputSearch.setValue(`${query}`)
         await this.searchButton.click()
-        await expect(ResultsPage.noResults).toBeExisting()
+        await expect(this.noResults).toBeExisting()
         for (let i = 0; i < this.category.length; i++) {
             await this.dropdownSelect.click()
             await this.dynamicCategorySelect(this.category[i]).click()
             await this.inputSearch.setValue(`${query}`)
             await this.searchButton.click()
-            await expect(ResultsPage.noResults).toBeExisting()
+            await expect(this.noResults).toBeExisting()
         }
     }
     async searchEachWithKey (query) {
         await this.inputSearch.setValue(`${query}`);
         await browser.keys('Enter');
-        await expect(ResultsPage.showResults).toBeExisting()
+        await expect(this.showResults).toBeExisting()
         for (let i = 0; i < this.category.length; i++) {
             await this.dropdownSelect.click()
             await this.dynamicCategorySelect(this.category[i]).click()
             await this.inputSearch.setValue(`${query}`)
             await browser.keys('Enter')
-            await expect(ResultsPage.showResults).toBeExisting()
+            await expect(this.showResults).toBeExisting()
         }
     }
     async searchEachWithKeyInv (query) {
         await this.inputSearch.setValue(`${query}`);
         await browser.keys('Enter');
-        await expect(ResultsPage.noResults).toBeExisting()
+        await expect(this.noResults).toBeExisting()
         for (let i = 0; i < this.category.length; i++) {
             await this.dropdownSelect.click()
             await this.dynamicCategorySelect(this.category[i]).click()
             await this.inputSearch.setValue(`${query}`)
             await browser.keys('Enter')
-            await expect(ResultsPage.noResults).toBeExisting()
+            await expect(this.noResults).toBeExisting()
         }
     }
     async sqlInject (searchQuery) {
         await this.inputSearch.setValue(searchQuery)
         await this.searchButton.click()
-        await expect(ResultsPage.accessDenied).toBeExisting()
+        await expect(this.accessDenied).toBeExisting()
     }
     start () {
         return browser.url(`https://www.barnesandnoble.com/`)
