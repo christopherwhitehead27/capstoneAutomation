@@ -69,6 +69,9 @@ class EventsPage extends Primary {
     get eventDetails () {
         return $('//h3[@class][contains(text(), "Event Details")]')
     }
+    get eventLocationSelector () {
+        return $('[class*="inStore"]')
+    }
     checkBoxes = {
         today: {
             name: "Today",
@@ -163,8 +166,8 @@ class EventsPage extends Primary {
                     await expect(this.resultsByType('Special Event')).toExist()
                 else if (item.name == 'Virtual Event')
                     await expect(this.resultsByLocation('Virtual')).toExist()
-                // else if (item.name == 'In-Store')
-                //     await expect(this.resultsByLocation('In Store')).toExist()
+                else if (item.name == 'In-Store')
+                    await expect(this.eventLocationSelector).toExist()
                 else 
                     await expect(this.resultCard).toExist()
             } catch {
