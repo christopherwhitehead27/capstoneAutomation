@@ -18,52 +18,32 @@ class HomePage extends Primary {
         return $(`//a[@class="dropdown-item "][contains(text(), "${category}")]`)
     }
 
-    async searchEachWithBtn (query) {
-        await this.inputSearch.setValue(`${query}`)
-        await this.searchButton.click()
-        await expect(this.showResults).toBeExisting()
-        for (let i = 0; i < this.category.length; i++) {
-            await this.dropdownSelect.click()
-            await this.dynamicCategorySelect(this.category[i]).click()
-            await this.inputSearch.setValue(`${query}`)
+    async triggerSearch(submitWith) {
+        if (submitWith === 'button') {
             await this.searchButton.click()
-            await expect(this.showResults).toBeExisting()
-        }
-    }
-    async searchEachWithBtnInv (query) {
-        await this.inputSearch.setValue(`${query}`)
-        await this.searchButton.click()
-        await expect(this.noResults).toBeExisting()
-        for (let i = 0; i < this.category.length; i++) {
-            await this.dropdownSelect.click()
-            await this.dynamicCategorySelect(this.category[i]).click()
-            await this.inputSearch.setValue(`${query}`)
-            await this.searchButton.click()
-            await expect(this.noResults).toBeExisting()
-        }
-    }
-    async searchEachWithKey (query) {
-        await this.inputSearch.setValue(`${query}`);
-        await browser.keys('Enter');
-        await expect(this.showResults).toBeExisting()
-        for (let i = 0; i < this.category.length; i++) {
-            await this.dropdownSelect.click()
-            await this.dynamicCategorySelect(this.category[i]).click()
-            await this.inputSearch.setValue(`${query}`)
+        } else {
             await browser.keys('Enter')
-            await expect(this.showResults).toBeExisting()
         }
     }
-    async searchEachWithKeyInv (query) {
-        await this.inputSearch.setValue(`${query}`);
-        await browser.keys('Enter');
-        await expect(this.noResults).toBeExisting()
-        for (let i = 0; i < this.category.length; i++) {
+
+    async expectResult(expected) {
+        if (expected === 'results') {
+            await expect(this.showResults).toExist()
+        } else {
+            await expect(this.noResults).toExist()
+        }
+    }
+
+    async searchEachCategory (query, { submitWith = 'button', expected = 'results' }) {
+        await this.inputSearch.setValue(query)
+        await this.triggerSearch(submitWith)
+        await this.expectResult(expected)
+        for (const category of this.category) {
             await this.dropdownSelect.click()
-            await this.dynamicCategorySelect(this.category[i]).click()
-            await this.inputSearch.setValue(`${query}`)
-            await browser.keys('Enter')
-            await expect(this.noResults).toBeExisting()
+            await this.dynamicCategorySelect(category).click()
+            await this.inputSearch.setValue(query)
+            await this.triggerSearch(submitWith)
+            await this.expectResult(expected)
         }
     }
     async sqlInject (searchQuery) {

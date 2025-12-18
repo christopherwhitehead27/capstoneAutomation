@@ -9,14 +9,8 @@ class EventsPage extends Primary {
     get zoomIn () {
         return $('#ZoomInButton')
     }
-    get zoomLevelUp () {
-        return $('#ZoomInButton[aria-label*="Level 11"]')
-    }
     get zoomOut () {
         return $('#ZoomOutButton')
-    }
-    get zoomLevelDown () {
-        return $('#ZoomOutButton[aria-label*="Level 10"]')
     }
     get storeInfobox () {
         return $('.infobox-close')
@@ -126,6 +120,9 @@ class EventsPage extends Primary {
             selector: "inStore",
         },
     }
+    dynamicZoomLevel (lvl) {
+        return $(`#ZoomInButton[aria-label*="Level ${lvl}"]`)
+    }
     dynamicCheckboxSelect (title) {
         return $(`//input[@name="${title}"]/ancestor::label`)
     }
@@ -201,9 +198,9 @@ class EventsPage extends Primary {
     async zoomInAndOut () {
         await this.closeCookies.click()
         await this.zoomIn.click()
-        await expect(this.zoomLevelUp).toBeExisting()
+        await expect(this.dynamicZoomLevel('11')).toExist()
         await this.zoomOut.click()
-        await expect(this.zoomLevelDown).toBeExisting()
+        await expect(this.dynamicZoomLevel('10')).toExist()
     }
     async selStoreDetails () {
         await this.map.moveTo()
@@ -215,14 +212,15 @@ class EventsPage extends Primary {
     }
     async changeMapView () {
         await this.mapType.moveTo()
+        await this.aerialMap.waitForClickable()
         await this.aerialMap.click()
         await expect(this.mapType).toHaveText('Aerial')
         await this.mapType.moveTo()
         await this.birdseyeMap.click()
-        await expect(this.birdseyeClose).toBeExisting()
+        await expect(this.birdseyeClose).toExist()
         await this.birdseyeClose.click()
         await this.locateMe.click()
-        await expect(this.locateMePressed).toBeExisting()
+        await expect(this.locateMePressed).toExist()
     }
     storesEvents () {
         return browser.url(`https://stores.barnesandnoble.com/`)
